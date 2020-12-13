@@ -75,15 +75,15 @@ while True:
     # there is no reason to keep looking.
 
     attempt = 0
-    face = frontalface
+    search_face = frontalface
     while attempt < max_face_recog_attempt:
-        face = frontalface if lastface == 0 or lastface == 1 else profileface
+        search_face = frontalface if lastface == 0 or lastface == 1 else profileface
         aframe = webcam.read()[1]  # there seems to be an issue in OpenCV or V4L or my webcam-
         aframe = webcam.read()[1]  # driver, I'm not sure which, but if you wait too long,
         aframe = webcam.read()[1]  # the webcam consistantly gets exactly five frames behind-
         aframe = webcam.read()[1]  # realtime. So we just grab a frame five times to ensure-
         aframe = webcam.read()[1]  # we have the most up-to-date image.
-        fface = face.detectMultiScale(aframe, 1.3, 4, (
+        fface = search_face.detectMultiScale(aframe, 1.3, 4, (
                 cv2.CASCADE_DO_CANNY_PRUNING + cv2.CASCADE_FIND_BIGGEST_OBJECT + cv2.CASCADE_DO_ROUGH_SEARCH),
                                       (60, 60))
         if fface != ():  # if we found a frontal face...
@@ -94,7 +94,7 @@ while True:
                 break
         else:
             attempt += 1
-            face = profileface
+            search_face = profileface
 
     if not faceFound:  # if no face was found...-
         lastface = 0  # the next loop needs to know
