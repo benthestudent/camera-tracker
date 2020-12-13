@@ -84,7 +84,7 @@ while True:
         aframe = webcam.read()[1]  # realtime. So we just grab a frame five times to ensure-
         aframe = webcam.read()[1]  # we have the most up-to-date image.
         fface = face.detectMultiScale(aframe, 1.3, 4, (
-                cv2.CV_HAAR_DO_CANNY_PRUNING + cv2.CV_HAAR_FIND_BIGGEST_OBJECT + cv2.CV_HAAR_DO_ROUGH_SEARCH),
+                cv2.HAAR_DO_CANNY_PRUNING + cv2.HAAR_FIND_BIGGEST_OBJECT + cv2.HAAR_DO_ROUGH_SEARCH),
                                       (60, 60))
         if fface != ():  # if we found a frontal face...
             lastface = attempt + 1  # set lastface 1 (so next loop we will only look for a frontface)
