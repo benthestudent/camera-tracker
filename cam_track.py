@@ -9,8 +9,8 @@ yServo = Servo(upper_limit=250, lower_limit=75, blaster_str="1=")
 
 
 webcam = cv2.VideoCapture(0)				# Get ready to start getting images from the webcam
-webcam.set(cv2.CV_CAP_PROP_FRAME_WIDTH, 320)		# I have found this to be about the highest-
-webcam.set(cv2.CV_CAP_PROP_FRAME_HEIGHT, 240)	# 	resolution you'll want to attempt on the pi
+webcam.set(cv2.CAP_PROP_FRAME_WIDTH, 320)		# I have found this to be about the highest-
+webcam.set(cv2.CAP_PROP_FRAME_HEIGHT, 240)	# 	resolution you'll want to attempt on the pi
 
 frontalface = cv2.CascadeClassifier("haarcascade_frontalface_alt2.xml")		# frontal face pattern detection
 profileface = cv2.CascadeClassifier("haarcascade_profileface.xml")		# side face pattern detection
