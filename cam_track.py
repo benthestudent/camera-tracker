@@ -4,8 +4,8 @@ import cv2
 import Servo
 
 # define x- and y-axis servos with upper lims and lower lims
-xServo = Servo(upper_limit=230, lower_limit=70)
-yServo = Servo(upper_limit=250, lower_limit=75)
+xServo = Servo(upper_limit=230, lower_limit=70, blaster_str="0=")
+yServo = Servo(upper_limit=250, lower_limit=75, blaster_str="1=")
 
         # ServoBlaster is what we use to control the servo motors
 
