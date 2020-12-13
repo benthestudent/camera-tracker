@@ -7,22 +7,23 @@ from Servo import Servo
 xServo = Servo(upper_limit=230, lower_limit=70, blaster_str="0=")
 yServo = Servo(upper_limit=250, lower_limit=75, blaster_str="1=")
 
+webcam = cv2.VideoCapture(0)  # Get ready to start getting images from the webcam
+webcam.set(cv2.CAP_PROP_FRAME_WIDTH, 320)  # I have found this to be about the highest-
+webcam.set(cv2.CAP_PROP_FRAME_HEIGHT, 240)  # resolution you'll want to attempt on the pi
 
-webcam = cv2.VideoCapture(0)				# Get ready to start getting images from the webcam
-webcam.set(cv2.CAP_PROP_FRAME_WIDTH, 320)		# I have found this to be about the highest-
-webcam.set(cv2.CAP_PROP_FRAME_HEIGHT, 240)	# 	resolution you'll want to attempt on the pi
-
-frontalface = cv2.CascadeClassifier("haarcascade_frontalface_alt2.xml")		# frontal face pattern detection
-profileface = cv2.CascadeClassifier("haarcascade_profileface.xml")		# side face pattern detection
+frontalface = cv2.CascadeClassifier("haarcascade_frontalface_alt2.xml")  # frontal face pattern detection
+profileface = cv2.CascadeClassifier("haarcascade_profileface.xml")  # side face pattern detection
 
 max_face_recog_attempt = 3
-face = [0,0,0,0]	# This will hold the array that OpenCV returns when it finds a face: (makes a rectangle)
-Cface = [0,0]		# Center of the face: a point calculated from the above variable
-lastface = 0		# int 1-3 used to speed up detection. The script is looking for a right profile face,-
-            # 	a left profile face, or a frontal face; rather than searching for all three every time,-
-            # 	it uses this variable to remember which is last saw: and looks for that again. If it-
-            # 	doesn't find it, it's set back to zero and on the next loop it will search for all three.-
-            # 	This basically tripples the detect time so long as the face hasn't moved much.
+face = [0, 0, 0, 0]  # This will hold the array that OpenCV returns when it finds a face: (makes a rectangle)
+Cface = [0, 0]  # Center of the face: a point calculated from the above variable
+lastface = 0  # int 1-3 used to speed up detection. The script is looking for a right profile face,-
+
+
+# 	a left profile face, or a frontal face; rather than searching for all three every time,-
+# 	it uses this variable to remember which is last saw: and looks for that again. If it-
+# 	doesn't find it, it's set back to zero and on the next loop it will search for all three.-
+# 	This basically tripples the detect time so long as the face hasn't moved much.
 
 def servo_controller(servo):  # Process 0 controlles servo0
     speed = .1  # Here we set some defaults:
@@ -46,22 +47,24 @@ def servo_controller(servo):  # Process 0 controlles servo0
         else:  # if all is good,-
             temp_speed = 1  # slow the speed; no need to eat CPU just waiting
 
-Process(target=servo_controller, args=(xServo)).start()	# Start the subprocesses
-Process(target=servo_controller, args=(yServo)).start()	#
-time.sleep(1)				# Wait for them to start
+
+Process(target=servo_controller, args=(xServo,)).start()  # Start the subprocesses
+Process(target=servo_controller, args=(yServo,)).start()  #
+time.sleep(1)  # Wait for them to start
 
 
-def cam_move(distance, speed, direction):		# To move right, we are provided a distance to move and a speed to move.
+def cam_move(distance, speed, direction):  # To move right, we are provided a distance to move and a speed to move.
     servo = xServo if direction in ["left", "right"] else yServo
-    if not servo.current_pos.empty():		# Read it's current position given by the subprocess(if it's avalible)-
-        temp_current = servo.current_pos.get()	# 	and set the main process global variable.
-    temp_desired = temp_current + distance if direction in ["right", "down"] else temp_current - distance	# The desired position is the current position + the distance to move.
-    if temp_desired > servo.upper_limit:		# But if you are told to move further than the servo is built go...
-        temp_desired = servo.upper_limit # Only move AS far as the servo is built to go.
+    if not servo.current_pos.empty():  # Read it's current position given by the subprocess(if it's avalible)-
+        temp_current = servo.current_pos.get()  # and set the main process global variable.
+    temp_desired = temp_current + distance if direction in ["right",
+                                                            "down"] else temp_current - distance  # The desired position is the current position + the distance to move.
+    if temp_desired > servo.upper_limit:  # But if you are told to move further than the servo is built go...
+        temp_desired = servo.upper_limit  # Only move AS far as the servo is built to go.
     if temp_desired < servo.lower_limit:
         temp_desired = servo.lower_limit
-    servo.desired_pos.put(temp_desired)			# Send the new desired position to the subprocess
-    servo.speed.put(speed)			# Send the new speed to the subprocess
+    servo.desired_pos.put(temp_desired)  # Send the new desired position to the subprocess
+    servo.speed.put(speed)  # Send the new speed to the subprocess
     return True
 
 
@@ -81,8 +84,8 @@ while True:
         aframe = webcam.read()[1]  # realtime. So we just grab a frame five times to ensure-
         aframe = webcam.read()[1]  # we have the most up-to-date image.
         fface = face.detectMultiScale(aframe, 1.3, 4, (
-                    cv2.CV_HAAR_DO_CANNY_PRUNING + cv2.CV_HAAR_FIND_BIGGEST_OBJECT + cv2.CV_HAAR_DO_ROUGH_SEARCH),
-                                             (60, 60))
+                cv2.CV_HAAR_DO_CANNY_PRUNING + cv2.CV_HAAR_FIND_BIGGEST_OBJECT + cv2.CV_HAAR_DO_ROUGH_SEARCH),
+                                      (60, 60))
         if fface != ():  # if we found a frontal face...
             lastface = attempt + 1  # set lastface 1 (so next loop we will only look for a frontface)
             for f in fface:  # f in fface is an array with a rectangle representing a face
@@ -129,5 +132,3 @@ while True:
             cam_move(7, 2, "up")
         if Cface[1] < 80:
             cam_move(9, 3, "up")
-
-
