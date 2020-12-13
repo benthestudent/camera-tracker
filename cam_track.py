@@ -54,6 +54,7 @@ time.sleep(1)  # Wait for them to start
 
 
 def cam_move(distance, speed, direction):  # To move right, we are provided a distance to move and a speed to move.
+    global temp_current
     servo = xServo if direction in ["left", "right"] else yServo
     if not servo.current_pos.empty():  # Read it's current position given by the subprocess(if it's avalible)-
         temp_current = servo.current_pos.get()  # and set the main process global variable.
