@@ -9,8 +9,8 @@ yServo = Servo(upper_limit=250, lower_limit=75, blaster_str="1=")
 
 
 webcam = cv2.VideoCapture(0)				# Get ready to start getting images from the webcam
-webcam.set(cv2.cv.CV_CAP_PROP_FRAME_WIDTH, 320)		# I have found this to be about the highest-
-webcam.set(cv2.cv.CV_CAP_PROP_FRAME_HEIGHT, 240)	# 	resolution you'll want to attempt on the pi
+webcam.set(cv2.CV_CAP_PROP_FRAME_WIDTH, 320)		# I have found this to be about the highest-
+webcam.set(cv2.CV_CAP_PROP_FRAME_HEIGHT, 240)	# 	resolution you'll want to attempt on the pi
 
 frontalface = cv2.CascadeClassifier("haarcascade_frontalface_alt2.xml")		# frontal face pattern detection
 profileface = cv2.CascadeClassifier("haarcascade_profileface.xml")		# side face pattern detection
@@ -81,7 +81,7 @@ while True:
         aframe = webcam.read()[1]  # realtime. So we just grab a frame five times to ensure-
         aframe = webcam.read()[1]  # we have the most up-to-date image.
         fface = face.detectMultiScale(aframe, 1.3, 4, (
-                    cv2.cv.CV_HAAR_DO_CANNY_PRUNING + cv2.cv.CV_HAAR_FIND_BIGGEST_OBJECT + cv2.cv.CV_HAAR_DO_ROUGH_SEARCH),
+                    cv2.CV_HAAR_DO_CANNY_PRUNING + cv2.CV_HAAR_FIND_BIGGEST_OBJECT + cv2.CV_HAAR_DO_ROUGH_SEARCH),
                                              (60, 60))
         if fface != ():  # if we found a frontal face...
             lastface = attempt + 1  # set lastface 1 (so next loop we will only look for a frontface)
